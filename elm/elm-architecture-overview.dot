@@ -1,0 +1,18 @@
+// as seen on: https://808.ninja/web-programmer/elm-architecture-overview-understanding-an-elm-program/
+digraph G {
+    Model [shape=polygon];
+    Browser [shape=house];
+    Subscription [shape=cds];
+    Command [shape=doublecircle];
+    View -> Browser [ label="html is generated when model changes" ];
+    Browser -> Update [label="Onclick/Onchange/etc. events triggered off any of the 'elm generated html' will pass a Msg"];
+    Browser -> Subscription [label="Ported js code provides Async data/events to elm app via subscription"];
+    Subscription -> Update [label="incoming data/event processed to Msg for Update"];
+    Command -> Update [label="Elm Commands can have side effects and the Result will be passed to Update as a Msg"];
+    
+    Model -> View [ label="View Function Applied to Model"];
+    View -> Update [ label="User/Async Event or Event from Ported JS Code (Msg is passed)"];
+    Update -> Model [ label="Update function is applied to Model given the received Msg"];
+    Update -> Command [ label="Update function is applied to Model given the received Msg"];
+}
+
