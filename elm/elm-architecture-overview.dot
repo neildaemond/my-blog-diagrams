@@ -1,18 +1,33 @@
 // as seen on: https://808.ninja/web-programmer/elm-architecture-overview-understanding-an-elm-program/
 digraph G {
-    Model [shape=polygon];
-    Browser [shape=house];
-    Subscription [shape=cds];
-    Command [shape=doublecircle];
-    View -> Browser [ label="html is generated when model changes" ];
-    Browser -> Update [label="Onclick/Onchange/etc. events triggered off any of the 'elm generated html' will pass a Msg"];
-    Browser -> Subscription [label="Ported js code provides Async data/events to elm app via subscription"];
-    Subscription -> Update [label="incoming data/event processed to Msg for Update"];
-    Command -> Update [label="Elm Commands can have side effects and the Result will be passed to Update as a Msg"];
-    
-    Model -> View [ label="View Function Applied to Model"];
-    View -> Update [ label="User/Async Event or Event from Ported JS Code (Msg is passed)"];
-    Update -> Model [ label="Update function is applied to Model given the received Msg"];
-    Update -> Command [ label="Update function is applied to Model given the received Msg"];
+        Model [ label="Data Model"];
+        View [shape=box label="view\l: Model -> Html Msg"]
+        Update [shape=box label="update\l: Msg -> Model -> ( Model, Cmd Msg )\l- Applies updates to Model(cannot have side effects)\l**Calls a list of Commands which have side effects**\l"];
+        Browser [shape=house label="Browser\nGenerated html presented for\nhuman viewing & interactions." margin=0 width=0 height=0]; 
+        Subscription [shape=cds];
+        Flags [shape=cds]
+        Init [shape=box label="init\l: Flags -> ( Model, Cmd Msg )\l**Calls a list of Commands which have side effects**\l"];
+        Init -> Command [ label="Cmd Msg" style=dashed];
+        Update [shape=box];
+        Command [shape=doublecircle label="Command\nElm Commands (like an\n HTTP request) have side\neffects which return\nun-predictable async results"];
+        //Command [label="Command\l- Elm Commands (formerly Tasks)\lcan have side effects and the\lResult will be passed to update\las a Msg\l"];
+        SubFn [shape=box label="subscription\l- Incoming data is\l  decoded into Msg\l"]
+
+        Flags -> Init;
+        Init -> Model;
+        Subscription -> SubFn;
+        SubFn -> Update  [ label="Msg"];
+        View -> Browser         [ label="Msg Html" ];
+        Browser -> Update       [ label="Msg\l- Onclick/Onchange/etc. events\l  triggered off any of the\l  'Elm generated html'\l" ];
+        Browser -> Subscription [ label="Ported js code provides Async\ldata/events to elm app via\lsubscription\l" style=dashed arrowhead=diamond];
+        Command -> Update       [ label="Msg\l- Result from\l  side-effect\l  causing\l  command\l"];
+                                  
+        Model -> View           [ label=""];
+        Update -> Model         [ label="Model\l(after update)\l"];
+        Update -> Command       [ label="Cmd Msg" style=dashed];
+        Model -> Update       [ label="Model\l(current)\l" style=dashed dir=both arrowhead=dot arrowtail=none];
+
+        {rank = same;  Update; View;}
+        {rank = same;  Subscription; SubFn;}
 }
 
