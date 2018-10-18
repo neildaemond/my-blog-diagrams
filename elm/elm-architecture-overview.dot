@@ -1,4 +1,4 @@
-// as seen on: https://808.ninja/web-programmer/elm-architecture-overview-understanding-an-elm-program/
+// as seen on: https://808.ninja/web-programmer/elm-architecture-flow-diagram/
 digraph G {
         Model [ label="Data Model"];
         View [shape=box label="view\l: Model -> Html Msg"]
